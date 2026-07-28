@@ -1,0 +1,27 @@
+python-dotenv
+sec-edgar-downloader
+beautifulsoup4
+python-dateutil
+
+llama-index-core
+llama-index-embeddings-huggingface
+llama-index-vector-stores-chroma
+chromadb
+
+langextract[openai]
+neo4j
+
+# optimize.py — token optimization + evaluation (local Ollama-backed)
+llmlingua
+ragas
+deepeval
+langchain-ollama
+openai
+instructor
+pydantic
+tiktoken
+
+# app.py — dashboard
+streamlit
+plotly
+pandas
