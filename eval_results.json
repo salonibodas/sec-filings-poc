@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-07-28T15:00:00Z",
+  "note": "Sample benchmark results for demonstration.",
+  "targets": {
+    "accuracy_improvement_pct": 25,
+    "context_precision_improvement_pct": 30,
+    "hallucination_reduction_pct": 40,
+    "input_token_reduction_pct": 50,
+    "output_token_reduction_pct": 40,
+    "cost_reduction_pct": 50,
+    "latency_reduction_pct": 25
+  },
+  "variants": {
+    "baseline": {
+      "avg_faithfulness": 0.62,
+      "avg_context_precision": 0.58,
+      "avg_hallucination": 0.35,
+      "avg_input_tokens": 1800,
+      "avg_output_tokens": 220,
+      "avg_latency_sec": 4.2,
+      "avg_cost_usd": 0.0
+    },
+    "kg": {
+      "avg_faithfulness": 0.74,
+      "avg_context_precision": 0.71,
+      "avg_hallucination": 0.24,
+      "avg_input_tokens": 2100,
+      "avg_output_tokens": 230,
+      "avg_latency_sec": 4.8,
+      "avg_cost_usd": 0.0
+    },
+    "optimized": {
+      "avg_faithfulness": 0.79,
+      "avg_context_precision": 0.76,
+      "avg_hallucination": 0.19,
+      "avg_input_tokens": 850,
+      "avg_output_tokens": 130,
+      "avg_latency_sec": 2.9,
+      "avg_cost_usd": 0.0
+    }
+  },
+  "improvements_vs_baseline": {
+    "kg_vs_baseline": {
+      "faithfulness_pct": 19.4,
+      "context_precision_pct": 22.4,
+      "hallucination_pct": 31.4
+    },
+    "optimized_vs_baseline": {
+      "faithfulness_pct": 27.4,
+      "context_precision_pct": 31.0,
+      "hallucination_pct": 45.7,
+      "input_tokens_pct": 52.8,
+      "output_tokens_pct": 40.9,
+      "cost_pct": 0.0,
+      "latency_pct": 31.0
+    }
+  },
+  "per_question": [
+    {
+      "id": "q1",
+      "category": "single-doc",
+      "question": "What did United Airlines identify as a key risk factor related to fuel costs?",
+      "baseline_answer": "United Airlines noted volatility in jet fuel prices could impact operating margins.",
+      "kg_answer": "United Airlines cited jet fuel price volatility and supply chain disruption as key risks.",
+      "optimized_answer": "Fuel price volatility key risk for UAL operating margins.",
+      "baseline_input_tokens": 1750,
+      "optimized_input_tokens": 820
+    }
+  ]
+}
+
