@@ -11,6 +11,12 @@ Run:
     streamlit run app.py
 """
 
+import tempfile
+import streamlit as st
+import streamlit.components.v1 as components
+from neo4j import GraphDatabase
+from pyvis.network import Network
+
 from __future__ import annotations
 
 import json
@@ -116,7 +122,7 @@ purely from retrieval and prompting strategy, not the underlying LLM.
         )
 
     tab_overview, tab_tokens, tab_explorer, tab_raw = st.tabs(
-        ["📊 Overview", "💰 Token & Cost", "🔍 Per-Question Explorer", "🗂️ Raw Data"]
+        ["📊 Overview", "💰 Token & Cost", "🔍 Per-Question Explorer", "🗂️ Raw Data", "Knowledge Graph"]
     )
 
     # ------------------------------------------------------------------
@@ -244,3 +250,72 @@ purely from retrieval and prompting strategy, not the underlying LLM.
 
 if __name__ == "__main__":
     main()
+
+
+with tab_kg:
+    st.subheader("🌐 SEC Filings Knowledge Graph Explorer")
+    st.write("Interactive view of entities and relationship paths stored in Neo4j AuraDB.")
+
+    # Slider allowing the viewer to adjust visual node density
+    node_limit = st.slider("Max Relationships to Display", min_value=10, max_value=100, value=35, step=5)
+
+    @st.cache_data(ttl=600)
+    def fetch_graph_data(limit):
+        # Query Neo4j for node pairs and relationships
+        cypher_query = f"""
+        MATCH (s)-[r]->(t)
+        RETURN s.name AS source, labels(s)[0] AS source_type, 
+               type(r) AS rel, 
+               t.name AS target, labels(t)[0] AS target_type
+        LIMIT {limit}
+        """
+        # Uses your existing Neo4j credentials
+        driver = GraphDatabase.driver(
+            st.secrets["NEO4J_URI"] if "NEO4J_URI" in st.secrets else "neo4j+s://<YOUR_INSTANCE>.databases.neo4j.io",
+            auth=(
+                st.secrets.get("NEO4J_USER", "neo4j"),
+                st.secrets.get("NEO4J_PASSWORD", "<YOUR_PASSWORD>")
+            )
+        )
+        with driver.session() as session:
+            records = [record.data() for record in session.run(cypher_query)]
+        driver.close()
+        return records
+
+    try:
+        graph_data = fetch_graph_data(node_limit)
+
+        if graph_data:
+            # Initialize Pyvis Canvas
+            net = Network(height="520px", width="100%", bgcolor="#0E1117", font_color="white", directed=True)
+
+            # Node Color Legend
+            color_map = {
+                "Company": "#4CAF50",   # Green
+                "Risk": "#FFC107",      # Yellow
+                "Expense": "#FF5722",   # Red
+                "Revenue": "#2196F3"    # Blue
+            }
+
+            for row in graph_data:
+                src, tgt = row["source"], row["target"]
+                src_type, tgt_type = row["source_type"], row["target_type"]
+
+                net.add_node(src, label=src, title=f"Type: {src_type}", color=color_map.get(src_type, "#97C2FC"))
+                net.add_node(tgt, label=tgt, title=f"Type: {tgt_type}", color=color_map.get(tgt_type, "#97C2FC"))
+                net.add_edge(src, tgt, label=row["rel"])
+
+            net.toggle_physics(True)
+
+            # Save temporarily and inject into Streamlit HTML component
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
+                net.save_graph(tmp.name)
+                with open(tmp.name, "r", encoding="utf-8") as f:
+                    html_bytes = f.read()
+
+            components.html(html_bytes, height=540)
+        else:
+            st.info("No active relationships retrieved from Neo4j.")
+
+    except Exception as e:
+        st.error(f"Could not connect to Neo4j database: {e}")

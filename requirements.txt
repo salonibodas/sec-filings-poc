@@ -25,3 +25,8 @@ tiktoken
 streamlit
 plotly
 pandas
+
+
+streamlit
+neo4j
+pyvis
