@@ -1,4 +1,3 @@
-
 """
 app.py — Streamlit demo dashboard for SEC Filings Intelligence POC.
 
@@ -246,4 +245,3 @@ purely from retrieval and prompting strategy, not the underlying LLM.
 if __name__ == "__main__":
     main()
     
-        
