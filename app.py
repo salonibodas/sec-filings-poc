@@ -217,7 +217,13 @@ purely from retrieval and prompting strategy, not the underlying LLM.
     # ------------------------------------------------------------------
     with tab_explorer:
         st.subheader("Per-question answers across variants")
-        per_question = data.get("per_question", [])
+        per_question = (
+            data.get("per_question")
+            or data.get("benchmark_dataset")
+            or data.get("benchmark_questions")
+            or data.get("questions")
+            or []
+        )
         if not per_question:
             st.warning("No per-question data yet — run `python optimize.py` to populate this tab.")
         else:
@@ -228,11 +234,11 @@ purely from retrieval and prompting strategy, not the underlying LLM.
             for q in filtered:
                 with st.expander(f"[{q['category']}] {q['question']}"):
                     st.markdown(f"**Baseline** ({q.get('baseline_input_tokens', '?')} input tokens)")
-                    st.write(q["baseline_answer"])
+                    st.write(q.get("baseline_answer") or (q.get("baseline") or {}).get("answer", ""))
                     st.markdown("**KG-RAG**")
-                    st.write(q["kg_answer"])
+                    st.write(q.get("kg_answer") or (q.get("kg") or {}).get("answer", ""))
                     st.markdown(f"**Optimized** ({q.get('optimized_input_tokens', '?')} input tokens)")
-                    st.write(q["optimized_answer"])
+                    st.write(q.get("optimized_answer") or (q.get("optimized") or {}).get("answer", ""))
 
     # ------------------------------------------------------------------
     # Raw Data

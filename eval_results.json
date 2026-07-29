@@ -3,41 +3,6 @@
   "note": "Full 10-question benchmark dataset for SEC Filings Intelligence POC.",
   "variants": {
     "baseline": {
-      "name": "Baseline RAG",
-      "description": "Baseline RAG — plain vector similarity search over chunked SEC Filings (10-K/10-Q for UAL, DAL, AAL, LUV), no graph, no compression.",
-      "avg_faithfulness": 0.62,
-      "avg_context_precision": 0.58,
-      "avg_hallucination": 0.35,
-      "avg_input_tokens": 1820,
-      "avg_output_tokens": 215,
-      "avg_latency_sec": 4.2,
-      "avg_cost_usd": 0.0
-    },
-    "kg": {
-      "name": "KG-RAG",
-      "description": "KG-RAG — adds a Neo4j knowledge graph (Company/Route/Revenue/Expense/Risk entities and relationships extracted with LangExtract) and does one-hop graph traversal alongside vector search.",
-      "avg_faithfulness": 0.74,
-      "avg_context_precision": 0.71,
-      "avg_hallucination": 0.24,
-      "avg_input_tokens": 2080,
-      "avg_output_tokens": 225,
-      "avg_latency_sec": 4.8,
-      "avg_cost_usd": 0.0
-    },
-    "optimized": {
-      "name": "Optimized RAG",
-      "description": "Optimized RAG — tighter top-k retrieval, context trimming, LLMLingua prompt compression, and a terse 'Caveman' system prompt, aimed at cutting token usage and latency while holding or improving faithfulness.",
-      "avg_faithfulness": 0.79,
-      "avg_context_precision": 0.76,
-      "avg_hallucination": 0.19,
-      "avg_input_tokens": 840,
-      "avg_output_tokens": 125,
-      "avg_latency_sec": 2.9,
-      "avg_cost_usd": 0.0
-    }
-  },
-  "metrics": {
-    "baseline": {
       "avg_faithfulness": 0.62,
       "avg_context_precision": 0.58,
       "avg_hallucination": 0.35,
@@ -70,19 +35,21 @@
     "context_precision_improvement_pct": 30,
     "hallucination_reduction_pct": 40,
     "input_token_reduction_pct": 50,
-    "output_token_reduction_pct": 35,
+    "output_token_reduction_pct": 40,
     "latency_reduction_pct": 25
   },
   "improvements_vs_baseline": {
-    "faithfulness_pct": 27.4,
-    "context_precision_pct": 31.0,
-    "hallucination_pct": 45.7,
-    "input_tokens_pct": 53.8,
-    "output_tokens_pct": 41.8,
-    "cost_pct": 0.0,
-    "latency_pct": 31.0
+    "optimized_vs_baseline": {
+      "faithfulness_pct": 27.4,
+      "context_precision_pct": 31.0,
+      "hallucination_pct": 45.7,
+      "input_tokens_pct": 53.8,
+      "output_tokens_pct": 41.8,
+      "cost_pct": 0.0,
+      "latency_pct": 31.0
+    }
   },
-  "questions": [
+  "per_question": [
     {
       "id": "q1",
       "category": "single-doc",
@@ -90,18 +57,8 @@
       "baseline_answer": "United Airlines noted that volatility in jet fuel prices could significantly impact operating margins and cash flows, as fuel expenses represent one of its largest operating costs.",
       "kg_answer": "United Airlines cited jet fuel price volatility and supply chain distribution disruptions as primary risk factors impacting route profitability.",
       "optimized_answer": "Jet fuel price volatility primary operational risk for UAL operating margins.",
-      "baseline": {
-        "answer": "United Airlines noted that volatility in jet fuel prices could significantly impact operating margins and cash flows, as fuel expenses represent one of its largest operating costs.",
-        "input_tokens": 1780
-      },
-      "kg": {
-        "answer": "United Airlines cited jet fuel price volatility and supply chain distribution disruptions as primary risk factors impacting route profitability.",
-        "input_tokens": 2010
-      },
-      "optimized": {
-        "answer": "Jet fuel price volatility primary operational risk for UAL operating margins.",
-        "input_tokens": 810
-      }
+      "baseline_input_tokens": 1780,
+      "optimized_input_tokens": 810
     },
     {
       "id": "q2",
@@ -110,18 +67,8 @@
       "baseline_answer": "Delta Air Lines reported passenger revenue of approximately $48.0 billion, driven by strong premium cabin demand and international travel recovery.",
       "kg_answer": "Delta Air Lines reported $48.0 billion in passenger revenue, with premium cabin travel generating a significant portion of overall ticket sales.",
       "optimized_answer": "Delta passenger revenue $48.0 billion in latest filing.",
-      "baseline": {
-        "answer": "Delta Air Lines reported passenger revenue of approximately $48.0 billion, driven by strong premium cabin demand and international travel recovery.",
-        "input_tokens": 1850
-      },
-      "kg": {
-        "answer": "Delta Air Lines reported $48.0 billion in passenger revenue, with premium cabin travel generating a significant portion of overall ticket sales.",
-        "input_tokens": 2050
-      },
-      "optimized": {
-        "answer": "Delta passenger revenue $48.0 billion in latest filing.",
-        "input_tokens": 830
-      }
+      "baseline_input_tokens": 1850,
+      "optimized_input_tokens": 830
     },
     {
       "id": "q3",
@@ -130,18 +77,8 @@
       "baseline_answer": "American Airlines highlighted aircraft fuel, salaries and related labor costs, and regional operating expenses as their primary operating cost drivers.",
       "kg_answer": "American Airlines listed aircraft fuel and labor agreements as top operating expenses affecting CASM.",
       "optimized_answer": "AAL operating expenses: aircraft fuel, labor agreements, maintenance costs.",
-      "baseline": {
-        "answer": "American Airlines highlighted aircraft fuel, salaries and related labor costs, and regional operating expenses as their primary operating cost drivers.",
-        "input_tokens": 1720
-      },
-      "kg": {
-        "answer": "American Airlines listed aircraft fuel and labor agreements as top operating expenses affecting CASM.",
-        "input_tokens": 1980
-      },
-      "optimized": {
-        "answer": "AAL operating expenses: aircraft fuel, labor agreements, maintenance costs.",
-        "input_tokens": 790
-      }
+      "baseline_input_tokens": 1720,
+      "optimized_input_tokens": 790
     },
     {
       "id": "q4",
@@ -150,18 +87,8 @@
       "baseline_answer": "Southwest Airlines highlighted domestic point-to-point markets, short-haul dense routes, and expanded near-international destinations as key focus areas.",
       "kg_answer": "Southwest Airlines focuses on point-to-point domestic markets, high-frequency regional routes, and Hawaii/Caribbean service.",
       "optimized_answer": "LUV focus: point-to-point domestic routes, short-haul markets, Hawaii.",
-      "baseline": {
-        "answer": "Southwest Airlines highlighted domestic point-to-point markets, short-haul dense routes, and expanded near-international destinations as key focus areas.",
-        "input_tokens": 1690
-      },
-      "kg": {
-        "answer": "Southwest Airlines focuses on point-to-point domestic markets, high-frequency regional routes, and Hawaii/Caribbean service.",
-        "input_tokens": 1920
-      },
-      "optimized": {
-        "answer": "LUV focus: point-to-point domestic routes, short-haul markets, Hawaii.",
-        "input_tokens": 760
-      }
+      "baseline_input_tokens": 1690,
+      "optimized_input_tokens": 760
     },
     {
       "id": "q5",
@@ -170,18 +97,8 @@
       "baseline_answer": "Both airlines reported rising labor costs due to new collective bargaining agreements with pilot unions, though Delta emphasized performance rewards while United cited contractual wage inflation.",
       "kg_answer": "United and Delta both cited pilot CBA implementation driving cost increases. Delta highlighted profit sharing, whereas United noted structural contractual increases.",
       "optimized_answer": "Both UAL and DAL report wage inflation from new pilot CBAs. Delta emphasizes profit sharing; United cites base pay hikes.",
-      "baseline": {
-        "answer": "Both airlines reported rising labor costs due to new collective bargaining agreements with pilot unions, though Delta emphasized performance rewards while United cited contractual wage inflation.",
-        "input_tokens": 1940
-      },
-      "kg": {
-        "answer": "United and Delta both cited pilot CBA implementation driving cost increases. Delta highlighted profit sharing, whereas United noted structural contractual increases.",
-        "input_tokens": 2180
-      },
-      "optimized": {
-        "answer": "Both UAL and DAL report wage inflation from new pilot CBAs. Delta emphasizes profit sharing; United cites base pay hikes.",
-        "input_tokens": 890
-      }
+      "baseline_input_tokens": 1940,
+      "optimized_input_tokens": 890
     },
     {
       "id": "q6",
@@ -190,18 +107,8 @@
       "baseline_answer": "American Airlines relies primarily on market pricing without active fuel hedging programs, whereas Southwest historically uses fuel derivative contracts to manage price spikes.",
       "kg_answer": "American exposure is unhedged against spot market prices. Southwest mitigates exposure through structured fuel hedging derivative positions.",
       "optimized_answer": "AAL unhedged to fuel volatility; LUV uses derivative hedging program.",
-      "baseline": {
-        "answer": "American Airlines relies primarily on market pricing without active fuel hedging programs, whereas Southwest historically uses fuel derivative contracts to manage price spikes.",
-        "input_tokens": 1890
-      },
-      "kg": {
-        "answer": "American exposure is unhedged against spot market prices. Southwest mitigates exposure through structured fuel hedging derivative positions.",
-        "input_tokens": 2110
-      },
-      "optimized": {
-        "answer": "AAL unhedged to fuel volatility; LUV uses derivative hedging program.",
-        "input_tokens": 860
-      }
+      "baseline_input_tokens": 1890,
+      "optimized_input_tokens": 860
     },
     {
       "id": "q7",
@@ -210,18 +117,8 @@
       "baseline_answer": "All four carriers consistently disclose fuel price volatility, macroeconomic downturns, labor disputes, cybersecurity breaches, and supply chain constraints on aircraft deliveries.",
       "kg_answer": "Shared risk factors across UAL, DAL, AAL, and LUV: Jet fuel cost fluctuations, aircraft delivery delays (Boeing/Airbus), pilot availability, and cyber threats.",
       "optimized_answer": "Common risks across all 4: Fuel volatility, OEM delivery delays, labor inflation, cyber security.",
-      "baseline": {
-        "answer": "All four carriers consistently disclose fuel price volatility, macroeconomic downturns, labor disputes, cybersecurity breaches, and supply chain constraints on aircraft deliveries.",
-        "input_tokens": 2100
-      },
-      "kg": {
-        "answer": "Shared risk factors across UAL, DAL, AAL, and LUV: Jet fuel cost fluctuations, aircraft delivery delays (Boeing/Airbus), pilot availability, and cyber threats.",
-        "input_tokens": 2350
-      },
-      "optimized": {
-        "answer": "Common risks across all 4: Fuel volatility, OEM delivery delays, labor inflation, cyber security.",
-        "input_tokens": 920
-      }
+      "baseline_input_tokens": 2100,
+      "optimized_input_tokens": 920
     },
     {
       "id": "q8",
@@ -230,18 +127,8 @@
       "baseline_answer": "Rising fuel costs increase CASM, reducing operating margins on lower-yield domestic routes unless ticket prices or fuel surcharges offset the cost increase.",
       "kg_answer": "Fuel price increases -> Higher CASM -> Reduced margin on long-haul/regional routes -> Potential capacity trimming on non-hub markets.",
       "optimized_answer": "Fuel cost spike -> increases CASM -> compresses margin on low-yield routes -> forces route reduction.",
-      "baseline": {
-        "answer": "Rising fuel costs increase CASM, reducing operating margins on lower-yield domestic routes unless ticket prices or fuel surcharges offset the cost increase.",
-        "input_tokens": 1810
-      },
-      "kg": {
-        "answer": "Fuel price increases -> Higher CASM -> Reduced margin on long-haul/regional routes -> Potential capacity trimming on non-hub markets.",
-        "input_tokens": 2040
-      },
-      "optimized": {
-        "answer": "Fuel cost spike -> increases CASM -> compresses margin on low-yield routes -> forces route reduction.",
-        "input_tokens": 820
-      }
+      "baseline_input_tokens": 1810,
+      "optimized_input_tokens": 820
     },
     {
       "id": "q9",
@@ -250,18 +137,8 @@
       "baseline_answer": "Delta explains that ratification of new labor agreements increases unit costs (CASM-ex-fuel) immediately through retro-pay and structural base rate increases.",
       "kg_answer": "Pilot CBA ratification -> Increased salary & retro-pay -> Drives CASM-ex-fuel higher -> Pressures non-operating margin.",
       "optimized_answer": "New union agreements -> higher base wages + retro pay -> increases CASM-ex-fuel.",
-      "baseline": {
-        "answer": "Delta explains that ratification of new labor agreements increases unit costs (CASM-ex-fuel) immediately through retro-pay and structural base rate increases.",
-        "input_tokens": 1760
-      },
-      "kg": {
-        "answer": "Pilot CBA ratification -> Increased salary & retro-pay -> Drives CASM-ex-fuel higher -> Pressures non-operating margin.",
-        "input_tokens": 1990
-      },
-      "optimized": {
-        "answer": "New union agreements -> higher base wages + retro pay -> increases CASM-ex-fuel.",
-        "input_tokens": 790
-      }
+      "baseline_input_tokens": 1760,
+      "optimized_input_tokens": 790
     },
     {
       "id": "q10",
@@ -270,62 +147,8 @@
       "baseline_answer": "American's unhedged position makes its long-haul international routes more vulnerable to margin pressure, whereas Southwest's hedging strategy and point-to-point network buffer short-term price shocks.",
       "kg_answer": "Unhedged AAL faces higher spot price risk on long flights. LUV fuel hedge program and short-haul point-to-point network absorb spot price volatility better.",
       "optimized_answer": "AAL unhedged + long-haul routes = high risk. LUV hedged + short-haul point-to-point = lower vulnerability.",
-      "baseline": {
-        "answer": "American's unhedged position makes its long-haul international routes more vulnerable to margin pressure, whereas Southwest's hedging strategy and point-to-point network buffer short-term price shocks.",
-        "input_tokens": 1960
-      },
-      "kg": {
-        "answer": "Unhedged AAL faces higher spot price risk on long flights. LUV fuel hedge program and short-haul point-to-point network absorb spot price volatility better.",
-        "input_tokens": 2190
-      },
-      "optimized": {
-        "answer": "AAL unhedged + long-haul routes = high risk. LUV hedged + short-haul point-to-point = lower vulnerability.",
-        "input_tokens": 880
-      }
-    }
-  ],
-  "benchmark_dataset": [
-    {
-      "id": "q1",
-      "category": "single-doc",
-      "question": "What did United Airlines identify as a key risk factor related to fuel costs?",
-      "baseline_answer": "United Airlines noted that volatility in jet fuel prices could significantly impact operating margins and cash flows, as fuel expenses represent one of its largest operating costs.",
-      "kg_answer": "United Airlines cited jet fuel price volatility and supply chain distribution disruptions as primary risk factors impacting route profitability.",
-      "optimized_answer": "Jet fuel price volatility primary operational risk for UAL operating margins.",
-      "baseline": {
-        "answer": "United Airlines noted that volatility in jet fuel prices could significantly impact operating margins and cash flows, as fuel expenses represent one of its largest operating costs.",
-        "input_tokens": 1780
-      },
-      "kg": {
-        "answer": "United Airlines cited jet fuel price volatility and supply chain distribution disruptions as primary risk factors impacting route profitability.",
-        "input_tokens": 2010
-      },
-      "optimized": {
-        "answer": "Jet fuel price volatility primary operational risk for UAL operating margins.",
-        "input_tokens": 810
-      }
-    }
-  ],
-  "benchmark_questions": [
-    {
-      "id": "q1",
-      "category": "single-doc",
-      "question": "What did United Airlines identify as a key risk factor related to fuel costs?",
-      "baseline_answer": "United Airlines noted that volatility in jet fuel prices could significantly impact operating margins and cash flows, as fuel expenses represent one of its largest operating costs.",
-      "kg_answer": "United Airlines cited jet fuel price volatility and supply chain distribution disruptions as primary risk factors impacting route profitability.",
-      "optimized_answer": "Jet fuel price volatility primary operational risk for UAL operating margins.",
-      "baseline": {
-        "answer": "United Airlines noted that volatility in jet fuel prices could significantly impact operating margins and cash flows, as fuel expenses represent one of its largest operating costs.",
-        "input_tokens": 1780
-      },
-      "kg": {
-        "answer": "United Airlines cited jet fuel price volatility and supply chain distribution disruptions as primary risk factors impacting route profitability.",
-        "input_tokens": 2010
-      },
-      "optimized": {
-        "answer": "Jet fuel price volatility primary operational risk for UAL operating margins.",
-        "input_tokens": 810
-      }
+      "baseline_input_tokens": 1960,
+      "optimized_input_tokens": 880
     }
   ]
 }
