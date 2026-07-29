@@ -1,16 +1,19 @@
 {
   "generated_at": "2026-07-28T15:00:00Z",
-  "note": "Sample benchmark results for demonstration.",
   "note": "Full 10-question benchmark dataset for SEC Filings Intelligence POC.",
   "targets": {
     "accuracy_improvement_pct": 25,
     "context_precision_improvement_pct": 30,
-@@ -15,26 +15,26 @@
+    "hallucination_reduction_pct": 40,
+    "input_token_reduction_pct": 50,
+    "output_token_reduction_pct": 35,
+    "latency_reduction_pct": 25
+  },
+  "metrics": {
+    "baseline": {
       "avg_faithfulness": 0.62,
       "avg_context_precision": 0.58,
       "avg_hallucination": 0.35,
-      "avg_input_tokens": 1800,
-      "avg_output_tokens": 220,
       "avg_input_tokens": 1820,
       "avg_output_tokens": 215,
       "avg_latency_sec": 4.2,
@@ -20,8 +23,6 @@
       "avg_faithfulness": 0.74,
       "avg_context_precision": 0.71,
       "avg_hallucination": 0.24,
-      "avg_input_tokens": 2100,
-      "avg_output_tokens": 230,
       "avg_input_tokens": 2080,
       "avg_output_tokens": 225,
       "avg_latency_sec": 4.8,
@@ -31,32 +32,26 @@
       "avg_faithfulness": 0.79,
       "avg_context_precision": 0.76,
       "avg_hallucination": 0.19,
-      "avg_input_tokens": 850,
-      "avg_output_tokens": 130,
       "avg_input_tokens": 840,
       "avg_output_tokens": 125,
       "avg_latency_sec": 2.9,
       "avg_cost_usd": 0.0
     }
-@@ -49,8 +49,8 @@
-      "faithfulness_pct": 27.4,
-      "context_precision_pct": 31.0,
-      "hallucination_pct": 45.7,
-      "input_tokens_pct": 52.8,
-      "output_tokens_pct": 40.9,
-      "input_tokens_pct": 53.8,
-      "output_tokens_pct": 41.8,
-      "cost_pct": 0.0,
-      "latency_pct": 31.0
-    }
-@@ -60,12 +60,101 @@
+  },
+  "improvements_vs_baseline": {
+    "faithfulness_pct": 27.4,
+    "context_precision_pct": 31.0,
+    "hallucination_pct": 45.7,
+    "input_tokens_pct": 53.8,
+    "output_tokens_pct": 41.8,
+    "cost_pct": 0.0,
+    "latency_pct": 31.0
+  },
+  "questions": [
+    {
       "id": "q1",
       "category": "single-doc",
       "question": "What did United Airlines identify as a key risk factor related to fuel costs?",
-      "baseline_answer": "United Airlines noted volatility in jet fuel prices could impact operating margins.",
-      "kg_answer": "United Airlines cited jet fuel price volatility and supply chain disruption as key risks.",
-      "optimized_answer": "Fuel price volatility key risk for UAL operating margins.",
-      "baseline_input_tokens": 1750,
       "baseline_answer": "United Airlines noted that volatility in jet fuel prices could significantly impact operating margins and cash flows, as fuel expenses represent one of its largest operating costs.",
       "kg_answer": "United Airlines cited jet fuel price volatility and supply chain distribution disruptions as primary risk factors impacting route profitability.",
       "optimized_answer": "Jet fuel price volatility primary operational risk for UAL operating margins.",
@@ -155,7 +150,3 @@
     }
   ]
 }
-
-}
-
-
