@@ -1,13 +1,40 @@
 {
   "generated_at": "2026-07-28T15:00:00Z",
   "note": "Full 10-question benchmark dataset for SEC Filings Intelligence POC.",
-  "targets": {
-    "accuracy_improvement_pct": 25,
-    "context_precision_improvement_pct": 30,
-    "hallucination_reduction_pct": 40,
-    "input_token_reduction_pct": 50,
-    "output_token_reduction_pct": 35,
-    "latency_reduction_pct": 25
+  "variants": {
+    "baseline": {
+      "name": "Baseline RAG",
+      "description": "Baseline RAG — plain vector similarity search over chunked SEC Filings (10-K/10-Q for UAL, DAL, AAL, LUV), no graph, no compression.",
+      "avg_faithfulness": 0.62,
+      "avg_context_precision": 0.58,
+      "avg_hallucination": 0.35,
+      "avg_input_tokens": 1820,
+      "avg_output_tokens": 215,
+      "avg_latency_sec": 4.2,
+      "avg_cost_usd": 0.0
+    },
+    "kg": {
+      "name": "KG-RAG",
+      "description": "KG-RAG — adds a Neo4j knowledge graph (Company/Route/Revenue/Expense/Risk entities and relationships extracted with LangExtract) and does one-hop graph traversal alongside vector search.",
+      "avg_faithfulness": 0.74,
+      "avg_context_precision": 0.71,
+      "avg_hallucination": 0.24,
+      "avg_input_tokens": 2080,
+      "avg_output_tokens": 225,
+      "avg_latency_sec": 4.8,
+      "avg_cost_usd": 0.0
+    },
+    "optimized": {
+      "name": "Optimized RAG",
+      "description": "Optimized RAG — tighter top-k retrieval, context trimming, LLMLingua prompt compression, and a terse 'Caveman' system prompt, aimed at cutting token usage and latency while holding or improving faithfulness.",
+      "avg_faithfulness": 0.79,
+      "avg_context_precision": 0.76,
+      "avg_hallucination": 0.19,
+      "avg_input_tokens": 840,
+      "avg_output_tokens": 125,
+      "avg_latency_sec": 2.9,
+      "avg_cost_usd": 0.0
+    }
   },
   "metrics": {
     "baseline": {
@@ -37,6 +64,14 @@
       "avg_latency_sec": 2.9,
       "avg_cost_usd": 0.0
     }
+  },
+  "targets": {
+    "accuracy_improvement_pct": 25,
+    "context_precision_improvement_pct": 30,
+    "hallucination_reduction_pct": 40,
+    "input_token_reduction_pct": 50,
+    "output_token_reduction_pct": 35,
+    "latency_reduction_pct": 25
   },
   "improvements_vs_baseline": {
     "faithfulness_pct": 27.4,
