@@ -1,13 +1,7 @@
-# Environment variables and secrets
-.env
-
 # Database and file stores
 chroma_db/
 sec-edgar-filings/
-eval_results.json
 
 # Python virtual environments & cache
 __pycache__/
-*.pyc
-.venv/
-venv/
+
