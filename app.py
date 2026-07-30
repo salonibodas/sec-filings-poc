@@ -10,7 +10,6 @@ been run yet, so the dashboard always renders.
 Run:
     streamlit run app.py
 """
-
 from __future__ import annotations
 
 import json
@@ -20,6 +19,8 @@ from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+
+from chat_component import show_chat
 
 RESULTS_PATH = Path("./eval_results.json")
 
@@ -246,6 +247,8 @@ purely from retrieval and prompting strategy, not the underlying LLM.
     with tab_raw:
         st.subheader("Raw eval_results.json")
         st.json(data)
+
+show_chat()
 
 
 if __name__ == "__main__":
