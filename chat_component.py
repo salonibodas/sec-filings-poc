@@ -1,39 +1,72 @@
+import json
+from pathlib import Path
 import streamlit as st
+
+RESULTS_PATH = Path("./eval_results.json")
+
+def load_eval_questions():
+    """Loads benchmark questions directly from eval_results.json"""
+    if RESULTS_PATH.exists():
+        try:
+            with open(RESULTS_PATH) as f:
+                data = json.load(f)
+                return (
+                    data.get("per_question")
+                    or data.get("benchmark_dataset")
+                    or data.get("questions")
+                    or []
+                )
+        except Exception:
+            return []
+    return []
 
 def show_chat():
     st.divider()
-    st.subheader("💬 SEC Filings Intelligence Assistant")
-    
+    st.subheader("💬 SEC Filings Intelligence Assistant (Offline Demo)")
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
+    # Display prior conversation
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    if prompt := st.chat_input("Ask about airlines SEC filings or evaluation metrics..."):
+    if prompt := st.chat_input("Ask a question about SEC filings or evaluation metrics..."):
+        # Display user question
         with st.chat_message("user"):
             st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        # Load your existing evaluation results
-        data = st.session_state.get("eval_data", {})
-        questions = data.get("per_question", [])
-        
-        # Search for a matching question in your local benchmark dataset
-        matched_q = next((q for q in questions if prompt.lower() in q["question"].lower()), None)
+        questions = load_eval_questions()
+        user_words = set(prompt.lower().split())
 
-        if matched_q:
+        matched_q = None
+        best_score = 0
+
+        # Keyword overlap matching
+        for q in questions:
+            q_text = q.get("question", "").lower()
+            # Count how many words match
+            overlap = sum(1 for word in user_words if word in q_text and len(word) > 3)
+            if overlap > best_score:
+                best_score = overlap
+                matched_q = q
+
+        # If we found a reasonable match (at least 1 key keyword matched)
+        if matched_q and best_score >= 1:
+            ans = matched_q.get("optimized_answer") or matched_q.get("baseline_answer") or "No answer recorded."
+            category = matched_q.get("category", "General")
+            
             response = (
-                f"**Question:** {matched_q['question']}\n\n"
-                f"**Optimized RAG Answer:**\n{matched_q.get('optimized_answer', 'N/A')}\n\n"
-                f"*Tokens used: {matched_q.get('optimized_input_tokens', '?')} input tokens.*"
+                f"**Matched Benchmark Question:** *\"{matched_q.get('question')}\"*\n\n"
+                f"**Category:** `{category}`\n\n"
+                f"**Optimized RAG Answer:**\n{ans}"
             )
         else:
             response = (
-                "I am currently operating in **Offline Demo Mode**. "
-                "I can answer questions present in your `eval_results.json` benchmark dataset. "
-                "Try asking about fuel risks, PRASM trends, or RAG token latency!"
+                "I couldn't find a matching question in your local `eval_results.json` dataset.\n\n"
+                "**Try asking terms like:** `Delta`, `fuel`, `PRASM`, `United`, or `latency`."
             )
 
         with st.chat_message("assistant"):
