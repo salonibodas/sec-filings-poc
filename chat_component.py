@@ -72,16 +72,3 @@ def show_chat():
         with st.chat_message("assistant"):
             st.markdown(response)
         st.session_state.messages.append({"role": "assistant", "content": response})
-
-
-# Updated response formatting in chat_component.py
-baseline_ans = matched_q.get("baseline_answer", "N/A")
-kg_ans = matched_q.get("kg_answer", "N/A")
-opt_ans = matched_q.get("optimized_answer", "N/A")
-
-response = (
-    f"**Matched Question:** *\"{matched_q.get('question')}\"*\n\n"
-    f"**Baseline RAG Answer:**\n{baseline_ans}\n\n"
-    f"**Optimized RAG Answer:**\n{opt_ans}\n\n"
-    f"*Tokens saved: {matched_q.get('optimized_input_tokens', '?')} input tokens vs Baseline.*"
-)
