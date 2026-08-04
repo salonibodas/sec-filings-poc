@@ -1,7 +1,7 @@
 """
 ingest.py — Baseline RAG ingestion pipeline for SEC Filings Intelligence POC.
 
-Downloads 10-K / 10-Q filings for UAL, DAL, AAL, LUV from SEC EDGAR (free,
+Downloads 10-K / 10-Q / 8-K filings for UAL, DAL, AAL, LUV from SEC EDGAR (free,
 no API key — just a descriptive User-Agent), chunks the primary documents,
 embeds them locally with a HuggingFace sentence-transformer, and persists
 the vectors to a local ChromaDB store at ./chroma_db.
@@ -26,7 +26,7 @@ load_dotenv()
 # ---------------------------------------------------------------------------
 
 TICKERS = ["UAL", "DAL", "AAL", "LUV"]
-FORM_LOOKBACK_YEARS = {"10-K": 5, "10-Q": 3}
+FORM_LOOKBACK_YEARS = {"10-K": 5, "10-Q": 3, "8-K": 2}
 
 FILINGS_DIR = Path("./sec-edgar-filings")
 CHROMA_DIR = "./chroma_db"
@@ -62,17 +62,21 @@ if not EDGAR_EMAIL:
 
 
 def download_filings() -> None:
-    """Download 10-K and 10-Q filings for each ticker via sec-edgar-downloader."""
+    """Download 10-K, 10-Q, and 8-K filings for each ticker via sec-edgar-downloader."""
     from sec_edgar_downloader import Downloader
 
     dl = Downloader(EDGAR_COMPANY_NAME, EDGAR_EMAIL, str(FILINGS_DIR.parent))
 
     for ticker in TICKERS:
         for form, years in FORM_LOOKBACK_YEARS.items():
-            kwargs = {"after": f"{2026 - years}-01-01"}
+            kwargs = {
+                "after": f"{2026 - years}-01-01",
+                "before": "2026-01-01"
+            }
             if MAX_FILINGS_PER_FORM:
                 kwargs["limit"] = MAX_FILINGS_PER_FORM
-            print(f"[download] {ticker} {form} (last {years}y)...")
+                
+            print(f"[download] {ticker} {form} ({kwargs['after']} to {kwargs['before']})...")
             try:
                 dl.get(form, ticker, **kwargs)
             except Exception as exc:  # noqa: BLE001
@@ -208,4 +212,3 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         sys.exit(1)
-        
