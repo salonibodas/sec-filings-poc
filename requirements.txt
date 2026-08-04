@@ -26,3 +26,7 @@ streamlit
 plotly
 pandas
 groq
+
+# chat_component.py context retriever
+langchain-community
+langchain-huggingface
